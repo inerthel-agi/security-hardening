@@ -242,7 +242,7 @@ Full guide: `references/ai/ai-ide-no-code-security.md`
 
 ```bash
 # 1. Create .gitignore with security template
-curl -o .gitignore https://raw.githubusercontent.com/stealthsrc/security-hardening/main/.gitignore-security-template
+curl -o .gitignore https://raw.githubusercontent.com/inerthel-agi/security-hardening/main/.gitignore-security-template
 
 # 2. Create .env.example (edit with placeholder values, commit this)
 #    Create .env (real values, never commit)
