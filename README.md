@@ -80,7 +80,7 @@ This repository is designed as a portable security knowledge base. It is primari
 If the assistant supports `agentskill.sh`, give it this exact instruction:
 
 ```text
-Install the skill "security-hardening" from https://agentskill.sh/@stealthsrc/security-hardening
+Install the skill "security-hardening" from https://agentskill.sh/@inerthel-agi/security-hardening
 ```
 
 `agentskill.sh` is a third-party skill installer. Review its source before trusting it in CI or on a shared machine.
@@ -89,14 +89,14 @@ The official install paths are documented below.
 ### 1. Clone the repository
 
 ```bash
-git clone --branch v1.0.0 --depth 1 https://github.com/stealthsrc/security-hardening.git
+git clone --branch v1.0.0 --depth 1 https://github.com/inerthel-agi/security-hardening.git
 cd security-hardening
 ```
 
 If you want the refactor preview instead, use:
 
 ```bash
-git clone https://github.com/stealthsrc/security-hardening.git
+git clone https://github.com/inerthel-agi/security-hardening.git
 cd security-hardening
 git checkout v2.0.0-rc.1
 ```

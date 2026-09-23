@@ -56,6 +56,6 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - Initial security reference corpus, workflow templates, and GitHub automation before semantic tagging.
 
-[Unreleased]: https://github.com/stealthsrc/security-hardening/compare/v2.0.0-rc.1...HEAD
-[v2.0.0-rc.1]: https://github.com/stealthsrc/security-hardening/compare/v1.0.0...v2.0.0-rc.1
-[v1.0.0]: https://github.com/stealthsrc/security-hardening/releases/tag/v1.0.0
+[Unreleased]: https://github.com/inerthel-agi/security-hardening/compare/v2.0.0-rc.1...HEAD
+[v2.0.0-rc.1]: https://github.com/inerthel-agi/security-hardening/compare/v1.0.0...v2.0.0-rc.1
+[v1.0.0]: https://github.com/inerthel-agi/security-hardening/releases/tag/v1.0.0

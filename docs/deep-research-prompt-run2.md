@@ -5,7 +5,7 @@ Same deliverable format as run 1 (section per file: Verified sources / To add / 
 
 ## Condensed context
 
-Public repo: `https://github.com/stealthsrc/security-hardening`
+Public repo: `https://github.com/inerthel-agi/security-hardening`
 Structure: `references/<domain>/<slug>.md` with YAML frontmatter containing `sources: []`.
 Fetch files directly via URL context. Do not attach.
 

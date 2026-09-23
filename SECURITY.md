@@ -18,7 +18,7 @@ This repository is documentation-first. The `main` branch is the only supported 
 Use the private reporting channel below:
 
 1. **GitHub Private Vulnerability Reporting** (preferred) - open a report at
-   <https://github.com/stealthsrc/security-hardening/security/advisories/new>
+   <https://github.com/inerthel-agi/security-hardening/security/advisories/new>
 
 An alternate email channel should be published here only once it is monitored and tested end-to-end.
 
