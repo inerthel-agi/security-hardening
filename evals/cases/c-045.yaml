@@ -1,0 +1,10 @@
+id: "c-045"
+input: "Modélise les menaces d'un flux où des utilisateurs téléversent des images de profil vers un stockage objet public."
+should_trigger: true
+should_load: ["references/_core-invariants.md", "references/appsec/threat-modeling.md", "references/appsec/api-security.md", "references/appsec/security-testing-examples.md"]
+required_load: ["references/_core-invariants.md", "references/appsec/threat-modeling.md"]
+must_not_load: ["references/compliance/compliance-mapping.md", "references/platform/mobile-security.md"]
+must_mention: []
+must_not_mention: []
+expected_profile: "threat-model"
+required_contract: ["scope-assumptions", "assets-actors", "trust-boundaries", "abuse-cases", "remediation", "validation", "residual-risk"]

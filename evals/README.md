@@ -1,72 +1,103 @@
 # Evals
 
-This directory stores routing fixtures for the `security-hardening` skill.
+This directory tests two independent properties of the `security-hardening` skill:
 
-## Scope
+1. **Trigger campaign** — a fresh agent receives only the user request. This measures whether the skill activates without being named or primed.
+2. **Execution campaign** — a fresh agent is explicitly told to use the skill. This measures profile selection, reference routing, and response contracts.
 
-The Phase 5 runner is an offline preflight harness. It validates:
+The runner never sends fixture ground truth to the model. `expected_profile`, `should_load`, exclusions, and semantic contracts stay evaluator-only.
 
-- fixture schema,
-- reference paths in `should_load` and `must_not_load`,
-- positive cases always loading `references/_core-invariants.md`,
-- positive routing targets being present in `SKILL.md`.
+## Coverage and result states
 
-By default it does **not** grade model prose or semantic quality. Fields such as
-`must_mention` and `must_not_mention` are recorded as manual checkpoints in the
-generated report.
+Static preflight validates fixture schema, globally unique `c-NNN`/`n-NNN` IDs, filename/ID equality, reference existence against the canonical `references/**/*.md` corpus, and positive/negative invariants.
 
-If you provide captured model responses, the runner can grade those checkpoints
-with simple case-insensitive string matching.
+Captured behavior validates:
 
-## Layout
+- trigger decision and response profile;
+- a collector-verified reference trace, including core exactly once, required references, exclusions, and unexpected references;
+- non-empty negative responses and defensive refusal/redirection for harmful requests;
+- substantive concepts rather than negated mentions or keyword lists;
+- structured, non-empty execution contract fields.
 
-- `cases/`: positive routing fixtures
-- `negative/`: non-trigger fixtures
-- `fixtures/vulnerable-snippet/`: intentional insecure snippets for `scripts/secure-review.py` smoke tests (static detect-only; never run against a real DB)
-- `fixtures/secrets/`: fake leak samples for Gitleaks smoke (documentation/example keys only)
-- `scale/`: labeled corpus generator + precision/recall harness
-- `results/`: generated markdown reports
-- `run.py`: offline runner
-- `response-collection-prompt.md`: copy-paste prompt for Claude Code, Codex CLI, Gemini CLI, or another LLM runtime
+Reports keep these states separate:
+
+- `Static PASS|FAIL`: fixture and corpus integrity;
+- `Behavior PASS|FAIL`: a captured response was graded;
+- `Behavior UNTESTED`: no captured response was supplied.
+
+An offline preflight can pass while behavior remains untested. Only strict mode proves that every fixture has a captured response.
+
+## Fixture schema
+
+Required fields:
+
+```yaml
+id: "c-001"
+input: "User request"
+should_trigger: true
+should_load: ["references/_core-invariants.md"]
+must_not_load: []
+must_mention: []
+must_not_mention: []
+```
+
+Execution-contract fields:
+
+```yaml
+expected_profile: "review"
+required_contract: ["evidence", "confidence", "validation"]
+required_load: ["references/_core-invariants.md", "references/appsec/api-security.md"]
+```
+
+Profiles are `review`, `threat-model`, `incident`, `roadmap`, `compliance`, and `implementation`. Unknown keys and contracts fail preflight. `required_load` is the minimum traced subset and must be contained by `should_load`. By default, traced domain references must also be a subset of `should_load`; a fixture may explicitly set `allow_additional_load: true` for a scenario that requires adaptive routing.
+
+Fixtures with `expected_profile` belong to the execution campaign. All other positive and negative fixtures belong to the blind trigger campaign.
 
 ## Run
 
-```bash
-python evals/run.py
-```
-
-Optional response grading:
+Read-only offline preflight:
 
 ```bash
-python evals/run.py --responses evals/responses.jsonl
-python evals/run.py --responses evals/responses.example.jsonl
+python evals/run.py --no-report
 ```
 
-`evals/responses.jsonl` format:
-
-```jsonl
-{"id":"c-032","runtime":"codex-cli","model":"unknown","output":"Treat hidden log instructions as untrusted data and block indirect prompt injection."}
-{"id":"c-034","runtime":"gemini-cli","model":"unknown","output":"Block base64 exfiltration and redact secrets."}
-```
-
-Use [`response-collection-prompt.md`](response-collection-prompt.md) to collect that JSONL consistently across Claude Code, Codex CLI, Gemini CLI, or another runtime.
-
-Generate one prompt file per fixture:
+Generate sanitized prompts:
 
 ```bash
-python evals/run.py --write-prompts evals/prompts --runtime codex-cli --model unknown
+python evals/run.py --write-prompts evals/prompts --no-report
 ```
 
-`evals/prompts/` is ignored by git. Paste each generated prompt into the target CLI, append the JSONL responses to `evals/responses.jsonl`, then run:
+This creates:
+
+- `evals/prompts/trigger/`: request-only prompts with no skill name, response schema, or ground truth;
+- `evals/prompts/execution/`: prompts that name the skill but expose only the request.
+
+Run every prompt in a fresh context. The trace-aware collector—not the evaluated model—must record whether the skill activated and which repository files were actually read. Do not infer `loaded_refs` from model prose.
+
+Grade a partial capture:
 
 ```bash
-python evals/run.py --responses evals/responses.jsonl
+python evals/run.py --responses evals/responses.jsonl --no-report
 ```
 
-The runner writes a markdown report to `evals/results/YYYY-MM-DD.md` and prints the path.
+Require exactly one captured response for every fixture and reject missing or unknown IDs:
 
-## Read the report
+```bash
+python evals/run.py --responses evals/responses.jsonl --strict-responses --no-report
+```
 
-- `PASS`: schema and routing preflight checks passed
-- `FAIL`: fixture is broken and needs to be fixed
-- `MANUAL`: semantic expectations that still need a model-backed or human review
+Omit `--no-report` to write an immutable UTC-stamped report under `evals/results/`. Reports include the repository revision, response SHA-256, runtimes, models, and strict-mode flag.
+
+## Captured response contract
+
+Each JSONL object has exactly these fields:
+
+```json
+{"id":"c-036","runtime":"codex-cli","model":"gpt-example","triggered":true,"profile":"review","loaded_refs":["references/_core-invariants.md","references/appsec/api-security.md"],"trace_verified":true,"output":{"evidence":"Observed evidence with enough context.","confidence":"Confidence and rationale."}}
+```
+
+`trace_verified` may be `true` only when file/tool telemetry confirms `loaded_refs`. A model statement such as “I loaded X” is not evidence. For a non-trigger case, use `triggered: false`, `profile: null`, and no path under `references/`.
+
+Execution fixtures with `required_contract` require an object-valued `output`. Every required field must hold substantive content; empty labels, repeated keywords, arrays with no content, and prose-only keyword salads fail.
+
+`evals/responses.example.jsonl` is a complete synthetic contract fixture for testing the evaluator. It is not evidence of a live model run.

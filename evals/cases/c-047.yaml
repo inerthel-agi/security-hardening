@@ -1,0 +1,10 @@
+id: "c-047"
+input: "Turn our SaaS audit into a cross-domain roadmap covering tenant authorization, CI supply-chain risk, and missing detections."
+should_trigger: true
+should_load: ["references/_core-invariants.md", "references/iam/authorization-rbac.md", "references/infra/supply-chain-security.md", "references/ops/detection-engineering.md", "references/ops/security-improvements.md", "references/appsec/threat-modeling.md"]
+required_load: ["references/_core-invariants.md", "references/iam/authorization-rbac.md", "references/infra/supply-chain-security.md", "references/ops/detection-engineering.md"]
+must_not_load: ["references/platform/mobile-security.md", "references/privacy/gdpr-security-ops.md"]
+must_mention: ["Now", "Next", "Later", "owner", "acceptance"]
+must_not_mention: []
+expected_profile: "roadmap"
+required_contract: ["prioritization", "owner", "acceptance-evidence", "impact"]

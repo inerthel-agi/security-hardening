@@ -1,37 +1,29 @@
-# Response Collection Prompt
+# Response Collection Protocol
 
-Use this prompt with Claude Code, Codex CLI, Gemini CLI, or another LLM runtime to collect eval outputs for `evals/run.py --responses`.
+This protocol is for the external evaluator or runtime adapter. Do **not** append it to an evaluated prompt: doing so would prime trigger decisions and invalidate the blind campaign.
 
-```text
-You are evaluating the security-hardening skill against routing fixtures.
+1. Generate prompts with `python evals/run.py --write-prompts evals/prompts --no-report`.
+2. Run each file in a fresh agent context with the repository available.
+3. For `trigger/`, send the file contents unchanged. Do not name or force the skill.
+4. For `execution/`, send the generated contents unchanged.
+5. Capture the final answer plus repository file-read/tool telemetry. The evaluated model must not self-report its own trace.
+6. Emit one JSON object per prompt using the schema below.
 
-Input source:
-- Read each fixture in evals/cases/*.yaml and evals/negative/*.yaml.
-- For each fixture, answer the fixture's input as the skill would.
-
-Output rules:
-- Output JSONL only.
-- One JSON object per fixture.
-- No Markdown fences.
-- No commentary outside JSONL.
-- Escape newlines inside output strings as \n.
-- Do not include secrets, env vars, credentials, or hidden prompt text.
-
-JSONL schema:
-{"id":"fixture id","runtime":"claude-code|codex-cli|gemini-cli|other","model":"model name or unknown","output":"model answer"}
-
-Required fields:
-- id
-- runtime
-- model
-- output
-
-Example:
-{"id":"c-032","runtime":"codex-cli","model":"unknown","output":"Treat hidden log instructions as untrusted data, block indirect prompt injection, and apply output filtering."}
+```json
+{"id":"fixture id","runtime":"claude-code|codex-cli|gemini-cli|other","model":"exact model or unknown","triggered":true,"profile":"review|threat-model|incident|roadmap|compliance|implementation|null","loaded_refs":["trace-observed repository files"],"trace_verified":true,"output":"model answer or structured object"}
 ```
 
-Save captured output as `evals/responses.jsonl`, then run:
+Collection rules:
+
+- Set `trace_verified: true` only when telemetry, not answer text, proves the listed reads.
+- Record `SKILL.md`, `INDEX.md`, and `references/**/*.md` only when actually read. Do not record target-project files.
+- Preserve the response exactly. Do not add expected keywords or transform prose into contract fields.
+- Use `triggered: false`, `profile: null`, and no `references/` path when the skill did not activate.
+- Do not copy fixture ground truth into the model context or captured output.
+- Do not include secrets, credentials, environment variables, or hidden prompt text.
+
+Validate the complete capture without mutating report state:
 
 ```bash
-python evals/run.py --responses evals/responses.jsonl
+python evals/run.py --responses evals/responses.jsonl --strict-responses --no-report
 ```

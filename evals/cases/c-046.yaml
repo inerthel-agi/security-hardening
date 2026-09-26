@@ -1,0 +1,10 @@
+id: "c-046"
+input: "A customer-support AI agent followed instructions from a malicious email and sent an unauthorized reply. Give the incident response."
+should_trigger: true
+should_load: ["references/_core-invariants.md", "references/ai/ai-agent-incident-response.md", "references/ai/hostile-corpus-review.md", "references/ops/incident-playbooks.md"]
+required_load: ["references/_core-invariants.md", "references/ai/ai-agent-incident-response.md"]
+must_not_load: ["references/compliance/compliance-mapping.md", "references/platform/mobile-security.md"]
+must_mention: ["containment", "evidence", "blast radius"]
+must_not_mention: []
+expected_profile: "incident"
+required_contract: ["containment-first", "preserve-evidence", "scope-blast-radius", "recovery", "monitoring"]

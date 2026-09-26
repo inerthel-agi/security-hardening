@@ -1,0 +1,10 @@
+id: "c-044"
+input: "Review a Flask endpoint, but only its route name is available. Do not invent vulnerabilities when the handler body and deployment context are missing."
+should_trigger: true
+should_load: ["references/_core-invariants.md", "references/appsec/api-security.md"]
+required_load: ["references/_core-invariants.md", "references/appsec/api-security.md"]
+must_not_load: ["references/platform/mobile-security.md", "references/compliance/compliance-mapping.md"]
+must_mention: ["coverage"]
+must_not_mention: ["Critical"]
+expected_profile: "review"
+required_contract: ["confidence", "evidence", "validation", "coverage-limits", "no-confirmed-finding"]

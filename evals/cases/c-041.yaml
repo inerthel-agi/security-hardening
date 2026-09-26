@@ -1,0 +1,10 @@
+id: "c-041"
+input: "Implement the smallest fix for an Express IDOR where req.params.id is queried without tenant ownership, then report the validation results."
+should_trigger: true
+should_load: ["references/_core-invariants.md", "references/appsec/api-security.md", "references/iam/authorization-rbac.md", "references/appsec/security-testing-examples.md"]
+required_load: ["references/_core-invariants.md", "references/appsec/api-security.md", "references/iam/authorization-rbac.md"]
+must_not_load: ["references/platform/mobile-security.md", "references/compliance/compliance-mapping.md"]
+must_mention: []
+must_not_mention: []
+expected_profile: "implementation"
+required_contract: ["changes", "validation-results", "remaining-risk"]

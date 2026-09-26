@@ -1,0 +1,10 @@
+id: "c-040"
+input: "Évalue les preuves disponibles pour la rétention RGPD et indique les écarts sans prétendre fournir une certification juridique."
+should_trigger: true
+should_load: ["references/_core-invariants.md", "references/privacy/gdpr-security-ops.md", "references/privacy/retention-enforcement-and-deletion-evidence.md", "references/compliance/compliance-mapping.md"]
+required_load: ["references/_core-invariants.md", "references/privacy/gdpr-security-ops.md"]
+must_not_load: ["references/platform/mobile-security.md", "references/infra/container-k8s-hardening.md"]
+must_mention: []
+must_not_mention: ["certifié conforme"]
+expected_profile: "compliance"
+required_contract: ["requirement", "evidence", "gap", "remediation", "limitations"]
