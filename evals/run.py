@@ -589,6 +589,8 @@ def load_responses(path: Path) -> ResponseSet:
             output=output,
             structured_output=structured_output,
         )
+    # Content fingerprint for report provenance, not password storage.
+    # nosemgrep: semgrep.ai.python.weak-password-hash
     return ResponseSet(responses=responses, sha256=hashlib.sha256(source.encode("utf-8")).hexdigest())
 
 
@@ -652,6 +654,8 @@ def write_report(
     results_dir.mkdir(parents=True, exist_ok=True)
     generated = datetime.now(timezone.utc)
     response_hash = response_set.sha256 if response_set else "none"
+    # Report filename discriminator, not a password hash or authentication token.
+    # nosemgrep: semgrep.ai.python.weak-password-hash
     run_fingerprint = hashlib.sha256(
         f"{generated.isoformat()}:{response_hash}:{strict}".encode("utf-8")
     ).hexdigest()[:8]
