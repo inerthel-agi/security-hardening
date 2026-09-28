@@ -105,20 +105,17 @@ git checkout v2.0.0-rc.1
 
 ### Install in Claude Code (CLI / IDE)
 
-Add the skill to your Claude Code settings file (`~/.claude/settings.json`):
+Claude Code loads skills from folders that contain a `SKILL.md` file. Clone the repository into your personal skills folder:
 
-```json
-{
-  "skills": [
-    {
-      "name": "security-hardening",
-      "path": "/path/to/security-hardening"
-    }
-  ]
-}
+```bash
+git clone --branch v1.0.0 --depth 1 https://github.com/inerthel-agi/security-hardening.git ~/.claude/skills/security-hardening
 ```
 
-Claude Code will auto-load `SKILL.md` and the `references/` directory whenever a security trigger fires. Replace `/path/to/security-hardening` with your local clone path.
+In Windows PowerShell 5.1, use `$HOME\.claude\skills\security-hardening` as the target folder.
+
+To enable the skill for a single project only, clone it into `.claude/skills/security-hardening` at the project root instead.
+
+Start a new Claude Code session. Claude Code loads `SKILL.md` and reads the `references/` files when a security task matches the skill description.
 
 ---
 
